@@ -1,0 +1,102 @@
+﻿@page "/login"
+@inject NavigationManager NavManager
+
+<section class="d-flex justify-content-center align-items-center pt-5 mt-2">
+    <div class="px-5 py-5 px-md-5 text-center text-lg-start" style="background-color: hsl(0, 0%, 96%)">
+        <div class="container">
+            <div class="row gx-lg-5 align-items-center justify-content-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h1 class="my-5 display-3 fw-bold">
+                        Bike Service Centre
+                        <span class="text-primary d-block" style="font-size: 34px;">Inventory Management System</span>
+                    </h1>
+                    <p style="color: hsl(217, 10%, 50.8%)">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Eveniet, itaque accusantium odio, soluta, corrupti aliquam
+                        quibusdam tempora at cupiditate quis eum maiores libero
+                        veritatis? Dicta facilis sint aliquid ipsum atque?
+                    </p>
+                </div>
+
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="card">
+                        <div class="card-body py-5 px-md-5">
+                            <form @onsubmit="LoginHandler">
+                                <h2 class="mb-4 text-center">Welcome to Login Page!</h2>
+
+                                <!-- If user does not exists, error message will be shown -->
+                                @if (!string.IsNullOrEmpty(_errorMsg))
+                                {
+                                    <div class="alert alert-danger py-2 text-center" role="alert">@_errorMsg</div>
+                                }
+
+                                <!-- Username input -->
+                                <div class="form-outline mb-4">
+                                    <label class="form-label">Username</label>
+                                    <input type="text" class="form-control" @bind="_username" required/>
+                                </div>
+
+                                <!-- Password input -->
+                                <div class="form-outline mb-4">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" @bind="_password" required/>
+                                </div>
+
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-primary w-100 mb-2 mt-2">
+                                    Login
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@code {
+    [CascadingParameter]
+    private GlobalState _globalState { get; set; }
+
+    private string _username { get; set; }
+
+    private string _password { get; set; }
+
+    private string _errorMsg { get; set; }
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            var user = UserService.Login(UserService.SeedUsername, UserService.SeedPassword);
+        }
+        catch
+        {
+
+        }
+        _globalState.CurrentUser = null;
+        _errorMsg = "";
+    }
+
+    private void LoginHandler()
+    {
+        try
+        {
+            _errorMsg = "";
+
+            var user = _globalState.CurrentUser = UserService.Login(_username, _password);
+
+            if (user != null)
+            {
+                NavManager.NavigateTo("/counter");
+            }
+        }
+        catch (Exception e)
+        {
+            _errorMsg = e.Message;
+        }
+    }
+}
+

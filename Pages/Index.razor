@@ -1,0 +1,22 @@
+﻿@page "/"
+
+@using Data.Model
+@inject NavigationManager NavManager
+
+@code {
+    [CascadingParameter]
+    private GlobalState _globalState { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (_globalState.CurrentUser == null)
+        {
+            NavManager.NavigateTo("/login");
+        }
+        else
+        {
+            NavManager.NavigateTo("/counter");
+        }
+        //NavManager.NavigateTo("/login");
+    }
+}
